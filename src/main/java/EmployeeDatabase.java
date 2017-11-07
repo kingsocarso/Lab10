@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
-
+@SuppressWarnings("all")
 /**
  * A class that implements a database of employees.
  * <p>
@@ -30,8 +30,8 @@ public class EmployeeDatabase {
     /**
      * Returns the manager for the given employee.
      *
-     * @param employee
-     * @return
+     * @param employee employee whose manager must be found.
+     * @return the employee's manager
      */
     Employee findManager(final Employee employee) {
         Employee manager = null;
@@ -53,9 +53,11 @@ public class EmployeeDatabase {
      * @return int
      */
     public int countManagersAbove(final Employee employee) {
-        /*
-         * Implement this function
-         */
+        if (findManager(employee) == null) {
+            return 0;
+        } else {
+            return 1 + countManagersAbove(findManager(employee));
+        }
     }
 
     /**
@@ -67,9 +69,28 @@ public class EmployeeDatabase {
      * @return int
      */
     public int countEmployeesUnder(final Employee employee) {
-        /*
-         * Implement this function
-         */
+        int numOfEmployees = 0;
+        for (int i = 0; i < employees.size(); i++) {
+            if (findManager(employees.get(i)) == employee) {
+                numOfEmployees++;
+            }
+        }
+        if (numOfEmployees == 0) {
+            return 0;
+        } else {
+            Employee[] managers = new Employee[numOfEmployees];
+            int j = 0;
+            for (int i = 0; i < employees.size(); i++) {
+                if (findManager(employees.get(i)) == employee) {
+                    managers[j] = employees.get(i);
+                    j++;
+                }
+            }
+            for (int k = 0; k < managers.length; k++) {
+                numOfEmployees += countEmployeesUnder(managers[k]);
+            }
+            return numOfEmployees;
+        }
     }
 
     /**
